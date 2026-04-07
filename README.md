@@ -1,8 +1,8 @@
 # mes-cli-skills
 
-AI agent skills for [mes-cli](https://github.com/enmotech/mes-cli) — the command-line interface for the MES platform.
+AI agent skills for `mes-cli` — the command-line interface for the MES platform.
 
-This repository is automatically synced from the `skills/` directory of [enmotech/mes-cli](https://github.com/enmotech/mes-cli) on every release.
+This repository is automatically synced from the `skills/` directory of `mes-cli` on every release.
 
 ## Available Skills
 
@@ -32,4 +32,4 @@ Place the `skills/` directory in your project workspace and the assistant will a
 
 ## Releases
 
-Skills are versioned together with `mes-cli`. See [mes-cli releases](https://github.com/enmotech/mes-cli/releases) for the changelog.
+Skills are versioned together with `mes-cli`.
