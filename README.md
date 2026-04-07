@@ -26,9 +26,7 @@ Converts natural language (Chinese or English) into precise `mes` CLI commands.
 
 ## Usage
 
-These skills are designed for use with AI coding assistants that support the Windsurf skill format (e.g. [Windsurf](https://windsurf.com)).
-
-Place the `skills/` directory in your project workspace and the assistant will automatically load the skills.
+These skills are designed for use with any AI agents that support skills.
 
 ## Releases
 
