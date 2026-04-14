@@ -15,7 +15,7 @@
 - `mes article`
   - `list`, `view`, `save`, `delete`, `assign-reviewer`, `set-level`, `set-type`, `review-count`
 - `mes contract`
-  - `list`, `view`
+  - `list`, `list-items`, `view`
 - `mes dashboard`
   - `base`
   - `contract`
@@ -150,7 +150,7 @@
   - `--company-id` **（必填）**
   - `--acc-id` **（必填，内部用户）**
   - `--type` **（必填，P0-P5，默认3）**
-  - `--body-html` / `--body-md` **（必填，二选一）**
+  - `--body-md` / `--body-html` **（必填，推荐优先使用 --body-md）**
   - `--body-html-file`
   - `--attach-url`（可重复）
   - `--mode contract|asset`
@@ -311,7 +311,6 @@
 #### 子命令参数
 
 - `plan list`
-  - `--new-api`
   - `--page`, `--page-size`
   - `--title` (按标题关键词模糊搜索，支持部分匹配)
   - `--company-name`
@@ -389,7 +388,7 @@
 
 - `contract list`
   - `--page`, `--page-size`
-  - `--search`
+  - `--search`（合同名称/合同编号，模糊匹配，不区分大小写）
   - `--owner-id`
   - `--type`
   - `--period-type`（默认 `0`，仅查询服务中/有效期内的合同；传空值可查询全部合同）
@@ -402,7 +401,7 @@
 - `contract list-items`
   - `--company-id` (optional)
   - `--contract-id` (optional)
-  - `--contract-num` (optional)
+  - `--contract-num` (optional) - Exact match searching by contract number
   - `--item-type` - Filter by itemType, e.g. 一般维保
   - `--date-range-start`, `--date-range-end` - both item start and end must be in range
   - `--min-progress-ratio`, `--max-progress-ratio` - Filter by actualHours/planHour
@@ -453,9 +452,9 @@
 
 ### Parameter completion rules for agent
 
+- 创建服务请求（service create）时，优先选择 `--body-md` 传入 Markdown 格式的正文，而非 `--body-html`。使用 Markdown 可以更好地处理代码块、列表和格式化内容。
 - `service request list` 的 JSON：统计「负责人」用 `executorEmployeeName`（真实姓名），不要用 `executorName` 代替；后者可为登录名。
 - 用户给 URL（plan/request）时，优先 `--from-url`，避免手工错填 `type/rid`。
 - `statistics add` 若无交互必须带齐：`--start --end --hours --remark` + 关联参数。
 - `service history create` 易漏：`--handle-over-time --happen-time --created-time --team-id --executor-id`。
 - 周报 create/update 正文三选一：`--md` / `--md-file` / `--html`（避免同时给）。
-- 查询场景默认 `-o json`；写场景默认先 `--dry-run`（若支持）。

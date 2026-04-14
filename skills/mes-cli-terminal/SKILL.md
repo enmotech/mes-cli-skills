@@ -18,7 +18,7 @@ description: Convert Chinese or natural-language MES requests into precise mes-c
 - 报工、查工时、审批工时、工时日历/汇总
 - 报工质量、报工评分、质量评分
 - 服务请求（工单）创建、回帖、恢复、编辑、报工
-- 计划任务查询/创建/编辑/结束/删除
+- 实施计划查询/创建/编辑/结束/删除
 - MES文章或合同查询与维护
 - MES管理看板（dashboard）查询、周报增删改查
 - MES OSS 图片上传（目前仅支持图片，不支持附件或压缩包等其他文件）
