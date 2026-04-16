@@ -4,8 +4,8 @@
 
 - `support /plan/{id}` => `type=1`, `rid={id}`
 - `support /service/request/{id}` => `type=0`, `rid={id}`
-- 用户说“我的”优先转换为显式人员参数（如 `--executor-id <uid>` 或 `--person-id <uid>`）
-- 用户说“本月/上月/上周”优先映射 `--range`
+- 用户说"我的"优先转换为显式人员参数（如 `--executor-id <uid>` 或 `--person-id <uid>`）
+- 用户说"本月/上月/上周"优先映射 `--range`
 - 给了精确日期优先 `--from --to` 或 `--start --end`
 - 默认输出：查询用 `-o json`；写操作可先文本 + `--dry-run`
 
@@ -13,50 +13,49 @@
 
 ### 登录与会话
 
-- “我现在登录了吗”  
+- "我现在登录了吗"  
   `mes auth status`
-- “浏览器登录 dev 环境”  
+- "浏览器登录 dev 环境"  
   `mes auth login --web --env dev`
-- “切换到 profile foo”  
+- "切换到 profile foo"  
   `mes auth switch --profile foo`
 
 ### 报工（高频）
 
-- “在这个计划链接上报今天 8 小时”  
+- "在这个计划链接上报今天 8 小时"  
   `mes statistics add --from-url "<plan-url>" --start "2026-03-24 09:00:00" --end "2026-03-24 18:00:00" --hours 8 --remark "..." --dry-run`
-- “查我本月工时”  
+- "查我本月工时"  
   `mes -o json statistics list --range thisMonth --executor-id <uid>`
-- “审批 101,102 通过”  
+- "审批 101,102 通过"  
   `mes statistics review --ids 101,102 --status approved`
 
 ### 服务请求
 
-- “列出我的未关闭工单”  
+- "列出我的未关闭工单"  
   `mes -o json service request list --status 1 --person-id <uid>`
-- “搜索标题包含 'Oracle' 的服务请求”  
+- "搜索标题包含 'Oracle' 的服务请求"  
   `mes -o json service request list --title "Oracle"`
-- “看工单 123 详情”  
+- "看工单 123 详情"  
   `mes -o json service request view 123`
-- “给工单 123 回复：已处理”  
+- "给工单 123 回复：已处理"  
   `mes service request reply 123 --text "已处理，等待验证" --dry-run`
-- “按工单 123 报工 2 小时”  
+- "按工单 123 报工 2 小时"  
   `mes service request report 123 --start "2026-03-24 14:00:00" --end "2026-03-24 16:00:00" --hours 2 --dry-run`
 
-- “帮我创建一个服务请求，标题是 '数据库连接失败'，公司 ID 是 4，合同子项 ID 是 2025103112176，等级 P3，正文说：今天早上 9 点开始连接不上数据库，报错如下：[错误提示]”
+- "帮我创建一个服务请求，标题是 '数据库连接失败'，公司 ID 是 4，合同子项 ID 是 2025103112176，等级 P3，正文说：今天早上 9 点开始连接不上数据库，报错如下：[错误提示]"
   `mes service create --title "数据库连接失败" --company-id 4 --acc-id "2025103112176" --type 3 --body-md "### 问题背景\n\n今天早上 9 点开始连接不上数据库。\n\n### 报错信息\n\n\`\`\`\n[错误提示]\n\`\`\`" --dry-run`
 
 ### 实施计划
 
-- “查我的实施计划”  
+- "查我的实施计划"  
   `mes -o json plan list --executor-id <uid>`
-- “结束实施计划 16570”  
+- "结束实施计划 16570"  
   `mes plan end 16570`
 
 ### 合同
 
 - “按关键词查合同”  
   `mes -o json contract list --search "Oracle"`
-
 - "按合同编号查询合同子项"  
   `mes -o json contract list-items --contract-num "00032597"`
 - "查某合同下实际工时为0的子项"  
@@ -64,39 +63,32 @@
 
 ### 知识库与文章
 
-- “查知识库待审核数”  
+- “查知识库待审核数”
   `mes article review-count`
-- “将 markdown 文件发布到知识库”
-  1. **准备 JSON 报文**：由于命令行参数解析限制，必须构造完整 JSON 并通过 `--body-file` 提交。
-  2. **生成工具**：请使用配套脚本 `skills/mes-cli-terminal/scripts/gen_json.py` 自动生成符合要求的 JSON。
-     ```bash
-     python3 skills/mes-cli-terminal/scripts/gen_json.py "<文章标题>" "<markdown文件路径>" <menuId> "<归属名称>"
-     ```
-     执行后会生成 `article_payload.json`，其结构如下（供参考）：
-     ```json
-     {
-       "title": "文章标题",
-       "contentMd": "正文内容（需转义换行符等）",
-       "menuId": 505,
-       "dict": "其他",
-       "tags": ["MES", "CLI"],
-       "status": 2,
-       "type": 0,
-       "difficultLevel": 0,
-       "encryptLevel": "INTERNAL"
-     }
-     ```
-  3. **提交命令**：
-     `mes article save --body-file article_payload.json`
+- “保存一篇知识库文章”
+  `mes article create --title “Oracle 巡检指南” --content-md “## 巡检项\n\n1. 检查表空间使用率” --tags “oracle,巡检” --menu-id 506`
+- “保存知识库文章（正文从文件读取）”
+  `mes article create --title “Oracle 巡检指南” --content-md-file ./report.md --tags “oracle,巡检”`
+- “仅更新文章 123 的标题”
+  `mes article update --id 123 --title “新标题”`
 
   **Heuristics & Guidance**:
-  - **重要**: CLI 目前在后台业务报错时仍可能显示“保存成功”，请务必在保存后使用 `mes article list --json` 确认。
   - **分类映射**:
-    - `menuId: 505` 对应 `dict: "其他"` (通用架构/流程类)。
-    - `menuId: 506` 对应 `dict: "数据库/Oracle"` (Oracle 专门技术类)。
-    - `menuId: 508` 对应 `dict: "数据库/PostgreSQL"` (PostgreSQL 专门技术类)。
-    - `menuId: 501` 对应 `dict: "zData"` (zData 产品文档)。
-  - **状态控制**: `status: 0` 为草稿，`status: 2` 为直接发布。
+    - `menuId: 505` 对应 `dict: “其他”` (通用架构/流程类)。
+    - `menuId: 506` 对应 `dict: “数据库/Oracle”` (Oracle 专门技术类)。
+    - `menuId: 508` 对应 `dict: “数据库/PostgreSQL”` (PostgreSQL 专门技术类)。
+    - `menuId: 501` 对应 `dict: “zData”` (zData 产品文档)。
+
+### 服务报告（关联服务请求）
+
+服务报告是 type=7 的知识库文章，自动设置 encrypt-level=INTERNAL 和 menu-id=505，仅内部可见。
+
+- “为服务请求 5183 编写服务报告”
+  `mes article create --title “服务请求 5183 处理报告” --content-md “## 问题摘要\n\n...” --tags “服务报告” --sr-id 5183`
+- “为服务请求 5183 编写服务报告（正文从文件读取）”
+  `mes article create --title “服务请求 5183 处理报告” --content-md-file ./report.md --tags “服务报告” --sr-id 5183`
+- “为已有关联文章的服务请求 456 更新服务报告”
+  `mes article update --id 123 --sr-id 456 --content-md “## 补充内容\n\n...”`
 
 ### 管理看板
 
@@ -123,14 +115,14 @@
 
 ### URL 解析
 
-- “这个 support 链接对应什么类型和 id”  
+- "这个 support 链接对应什么类型和 id"  
   `mes -o json util parse-support-url "https://support.enmotech.com/plan/16570"`
 
 ### 对象存储与图片上传
 
-- “上传这张本地图片到 MES”
+- "上传这张本地图片到 MES"
   `mes oss upload image /path/to/img.png`
-- “上传图片并查看大小详情”
+- "上传图片并查看大小详情"
   `mes -o json oss upload image img.jpg`
 
 > ⚠️ 场景：当用户需要在回复工单或保存文档时嵌入本地图片，请先使用 `oss upload image` 获取 URL，再将 URL 填入正文。目前**仅支持图片**，不支持其他文件。
@@ -159,7 +151,7 @@
 
 ## 真实场景示例
 
-以下示例可直接作为 agent 的对话模板，优先按“先总结 -> 再执行命令 -> 回传结果”的节奏。
+以下示例可直接作为 agent 的对话模板，优先按"先总结 -> 再执行命令 -> 回传结果"的节奏。
 
 ### 从截图创建服务请求（同时将截图包含在服务请求中）
 
@@ -203,7 +195,7 @@
 
 **Agent should do**
 
-1. 先把“上面工作内容”总结成 1 段报工文案（不少于 20 字）。
+1. 先把"上面工作内容"总结成 1 段报工文案（不少于 20 字）。
 2. 命令先 dry-run，再确认提交。
 3. 计划链接优先用 `--from-url`，必要时补 `--acc-id`。
 
@@ -267,7 +259,7 @@ MES上我负责的超期中的实施计划有哪些？
 
 **Agent should do**
 
-1. 先拉取“我负责 + 进行中”计划。
+1. 先拉取"我负责 + 进行中"计划。
 2. 以 `endDate < 今天` 进行本地筛选并输出超期列表。
 
 **Command**
