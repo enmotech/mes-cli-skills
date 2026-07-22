@@ -70,7 +70,10 @@
 > ⚠️ **已关闭的服务请求上传附件**：必须加 `--internal`，否则报"您没有资源权限"。
 
 - "帮我创建一个服务请求，标题是 '数据库连接失败'"
-  `mes sr create --title "数据库连接失败" --company-id 4 --acc-id "2025103112176" --type 3 --body-md "### 问题背景\n\n今天早上 9 点开始连接不上数据库。\n\n### 报错信息\n\n\`\`\`\n[错误提示]\n\`\`\`" --dry-run`
+  `mes sr create --title "数据库连接失败" --company-id 4 --external-plan-id "PLAN-0001" --acc-id "2025103112176" --type 3 --body-md "### 问题背景\n\n今天早上 9 点开始连接不上数据库。\n\n### 报错信息\n\n\`\`\`\n[错误提示]\n\`\`\`"`
+
+- "按实施计划创建一个服务请求，无需指定 acc-id / company-id"
+  `mes sr create --mode plan --title "巡检发现的问题" --external-plan-id "PLAN-0001" --type 4 --body-md "巡检记录"`
 
 ### 实施计划
 
@@ -93,6 +96,9 @@
   `mes -o json contract list-items --contract-num "00032597"`
 - "查某合同下实际工时为0的子项"  
   `mes contract list-items --contract-id 12345 --actual-hours-zero-only`
+- "查已过期合同的全部子项（含历史记录）"  
+  `mes -o json contract list-items --contract-id 1380 --unlimited-end-time`  
+  （`--include-expired` 是同名别名；不传该 flag 时仍只返回 `end_time >= today` 的子项。）
 - "查合同 12345 详情"  
   `mes -o json contract view 12345`
 
@@ -200,15 +206,13 @@
 
 1. 先读取截图内容，提炼关键信息。
 2. 上传截图，获取到截图的URL。
-3. 用 `sr create` 生成并提交服务请求（支持 dry-run）。
+3. 用 `sr create` 生成并提交服务请求。
 
 **Command**
 
 `mes oss upload image /path/to/img.png`
 
-`mes sr create --title "SQL 执行速度较慢分析" --company-id 4 --acc-id "2025103112176" --type 3 --body-md "## 问题描述\n\n数据库存储过程中的一条 SQL 执行速度较慢（约1分钟），客户要求分析是否正常。\n\n## 分析结论\n\n该 SQL 走了索引（LINE_NO字段），但返回行数和数据量仍然很大：\n\n- LINE_NO 字段 distinct value 仅 26 个，选择性差\n- 索引访问预估 944MB，全表访问预估 34.75GB\n- 走索引比全表快约 36 倍，已为最优执行计划\n- 执行 1 分钟左右属于正常现象，非索引问题\n\n## 截图\n\n![](https://oss-esprod-public.enmotech.com/image/base/uploaded-image.jpg)" --dry-run`
-
-提交时去掉 `--dry-run`。
+`mes sr create --title "SQL 执行速度较慢分析" --company-id 4 --external-plan-id "PLAN-0001" --acc-id "2025103112176" --type 3 --body-md "## 问题描述\n\n数据库存储过程中的一条 SQL 执行速度较慢（约1分钟），客户要求分析是否正常。\n\n## 分析结论\n\n该 SQL 走了索引（LINE_NO字段），但返回行数和数据量仍然很大：\n\n- LINE_NO 字段 distinct value 仅 26 个，选择性差\n- 索引访问预估 944MB，全表访问预估 34.75GB\n- 走索引比全表快约 36 倍，已为最优执行计划\n- 执行 1 分钟左右属于正常现象，非索引问题\n\n## 截图\n\n![](https://oss-esprod-public.enmotech.com/image/base/uploaded-image.jpg)"`
 
 ### 自动归纳服务请求内容并报工
 

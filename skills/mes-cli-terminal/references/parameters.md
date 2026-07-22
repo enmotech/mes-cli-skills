@@ -147,23 +147,25 @@
 
 - `sr create`
   - `--title` **（必填）**
-  - `--company-id` **（必填）**
-  - `--acc-id` **（必填，内部用户）**
+  - `--company-id` **（必填，合同/资产模式；plan 模式可由实施计划派生）**
+  - `--external-plan-id` **（必填：内部用户合同模式 / `--mode plan`；外部用户非必填）**
+  - `--acc-id` **（可选一致性校验；后端将其作为 `pickImplementationPlan` 的二级匹配键）**
   - `--type` **（必填，P0-P5，默认P4=4）**
   - `--body-md` / `--body-html` **（必填，推荐优先使用 --body-md）**
   - `--body-html-file`
   - `--attach-url`（可重复）
-  - `--mode contract|asset`
-  - `--contract-id`
-  - `--asset-id`
+  - `--mode contract|asset|plan`
+  - `--contract-id`（外部用户必填）
+  - `--asset-id`（`--mode asset` 时必填）
   - `--recover-type`
   - `--menu-id`
   - `--team-id`
   - `--executor-id`
   - `--email`
   - `--phone`
-  - `--external-plan-id`
   - `--json`
+
+> ⚠️ **后端契约变更**（`enmo_support 11127ba7`）：内部员工合同模式必须传 `--external-plan-id`，否则后端返回 `请选择实施计划`。CLI 在 `mes sr create` 进入 HTTP 之前就会 fail-fast，提示用户使用 `mes plan list --company-id <id>` 查实施计划。`--mode plan` 是新增绑定模式，公司ID / accId 可由实施计划派生。
 
 ### `mes sr` 字典
 
@@ -408,6 +410,7 @@
   - `--date-range-start`, `--date-range-end` - both item start and end must be in range
   - `--min-progress-ratio`, `--max-progress-ratio` - Filter by actualHours/planHour
   - `--actual-hours-zero-only` - Only items with actualHours == 0
+  - `--unlimited-end-time` / `--include-expired` - Include items from contracts that have already ended (forwards `unlimitedEndTime=true`; default still filters by `end_time >= today`)
   - `--page`, `--page-size`, `--all` - Pagination
   - `--json`
 
